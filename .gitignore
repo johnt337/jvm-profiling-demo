@@ -1,0 +1,10 @@
+*.swp
+*.tfplan
+*.tfstate*
+fuze
+infrastructure/.terraform
+infrastructure/templates/userdata/ignition.json
+infrastructure/templates/userdata/ignition.json.tmp
+infrastructure/templates/userdata/ignition.yaml
+services/containers/demo-lb/certs/demo.*
+services/containers/demo-bastion/conf/demo.pem*

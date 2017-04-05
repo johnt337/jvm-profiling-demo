@@ -1,0 +1,22 @@
+{
+  "variable": {
+    "deployment":{
+      "type":"map",
+      "default":{
+        "version":"1.0.0",
+        "environment":"dev",
+        "app_name":"profiler",
+        "region":"us-east-1",
+        "ssh_key":"demo",
+        "customer":"demo",
+        "consortium":"none",
+        "aws_tag_version":"0.0.1",
+        "s3_util_version":"0.0.6",
+        "ntp":"us.pool.ntp.org",
+        "site_name": "jvm-profiling",
+        "registry": "",
+        "fqdn": ""
+      }
+    }
+  }
+}

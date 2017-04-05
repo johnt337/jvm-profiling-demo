@@ -1,0 +1,16 @@
+GRANT
+  SELECT,
+  INSERT,
+  UPDATE,
+  DELETE,
+  CREATE TEMPORARY TABLES,
+  EXECUTE,
+  SHOW VIEW
+ON
+  demo.*
+TO
+  'demo'@'%'
+WITH
+  GRANT OPTION;
+
+flush privileges;

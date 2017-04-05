@@ -1,0 +1,12 @@
+<Context>
+  <Resource name="demo_connection" auth="Container"
+    maxActive="100"
+    maxIdle="50"
+    maxWaitMillis="10000"
+    username="demo"
+    password="demo"
+    driverClassName="com.mysql.jdbc.Driver"
+    type="javax.sql.DataSource"
+    url="jdbc:mysql://db/demo"
+    validationQuery="/* ping */ select 1" />
+</Context>

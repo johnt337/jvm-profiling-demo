@@ -1,0 +1,10 @@
+{
+  "variable": {
+    "asgs":{
+      "type":"map",
+      "default":{
+        "demo":"demo"
+      }
+    }
+  }
+}

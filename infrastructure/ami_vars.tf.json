@@ -1,0 +1,13 @@
+{
+  "variable": {
+    "amis":{
+      "type":"map",
+      "default":{
+        "us-east-1.coreos.1235.6.0":"ami-3b7f9e2d",
+        "us-west-2.coreos.1235.6.0":"ami-12942672", 
+        "us-east-1.coreos.1298.7.0":"ami-6bb93c7d",
+        "us-west-2.coreos.1298.7.0":"ami-fcc4539c" 
+      }
+    }
+  }
+}

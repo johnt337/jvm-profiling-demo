@@ -1,0 +1,123 @@
+version: '2.1'
+services:
+  demo-db:
+    image: mysql/mysql-server:5.6.27
+    container_name: demo-db
+    env_file:
+      - ./services/config/mysql_root.env 
+      # if you the contents of this next file,  see the healthcheck & context.xml notes below
+      - ./services/config/db.env 
+    volumes:
+      - ./services/containers/demo-db/bootstrap:/docker-entrypoint-initdb.d:ro
+      # uncomment this line to turn on debug and override defaults
+      #- ./services/containers/demo-db/conf/my.cnf:/etc/my.cnf:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+    healthcheck:
+      # note: if you change the username and password above, you have to change it here
+      test: "mysql -h localhost -u demo --password=demo -e 'select login from demo_users' demo"
+  demo-server:
+    build:
+      context: ./services/containers/demo-server
+      dockerfile: Dockerfile
+      args:
+        MYSQL_DRIVER_DOWNLOAD_VERSION: 5.1.40
+        TOMCAT_DOWNLOAD_VERSION: 9.0 
+    image: ${REGISTRY}/demo-server
+    container_name: demo-server
+    links:
+      - "demo-db"
+    environment:
+      - FQDN=${FQDN}
+      - CATALINA_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=9090 -Dcom.sun.management.jmxremote.rmi.port=9090 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Djava.awt.headless=true -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true -Duser.timezone=UTC  -Djava.rmi.server.hostname=localhost -XX:-UsePerfData
+    env_file:
+      # if you the contents of this file,  see the healthcheck & context.xml notes below
+      - ./services/config/db.env 
+    volumes:
+      # note: if you change the db username and password above,
+      # you have to change it in this file as well
+      - ./services/containers/demo-server/context.xml:/usr/local/tomcat/conf/context.xml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - frontend
+      - backend
+    healthcheck:
+      test: "exit 0"
+    depends_on:
+      demo-db:
+        condition: service_healthy
+  demo-lb:
+    build:
+      context: ./services/containers/demo-lb
+      dockerfile: Dockerfile
+    image: ${REGISTRY}/demo-lb
+    container_name: demo-lb
+    environment:
+      - FQDN=${FQDN}
+    volumes:
+      - ./services/containers/demo-lb/default.conf:/etc/nginx/conf.d/default.conf
+      - ./services/containers/demo-lb/certs:/usr/certs:ro
+    links:
+      - "demo-server"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend
+    healthcheck:
+      test: "curl -kf http://localhost/hello.jsp"
+    depends_on:
+      demo-server:
+        condition: service_healthy
+  sysdig:
+    container_name: demo-sysdig-agent
+    privileged: true
+    stdin_open: true
+    tty: true
+    network_mode: host
+    pid: host
+    image: sysdig/agent:0.53.0
+    environment:
+      - ACCESS_KEY=${ACCESS_KEY}
+      - TAGS=example_tag:example_value
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - /dev:/host/dev
+      - /proc:/host/proc:ro
+      - /boot:/host/boot:ro
+      - /lib/modules:/host/lib/modules:ro
+      - /usr:/host/usr:ro
+  demo-bastion:
+    build:
+      context: ./services/containers/demo-bastion
+      dockerfile: Dockerfile
+      args:
+        ROOT_PASSWORD: root
+        UBUNTU_PASSWORD: demo
+        TUNNEL_PORT: 29090
+    image: ${REGISTRY}/demo-bastion
+    container_name: demo-bastion
+    links:
+      - "demo-lb"
+      - "demo-server"
+      - "demo-db"
+    ports:
+      - "20022:22"
+    networks:
+      - frontend
+      - backend
+    healthcheck:
+      test: "nc -w 1 -z demo-bastion 22"
+    depends_on:
+      demo-db:
+        condition: service_healthy
+      demo-server:
+        condition: service_healthy
+      demo-lb:
+        condition: service_healthy
+networks:
+  frontend:
+  backend:

@@ -1,0 +1,29 @@
+{
+  "variable": {
+    "demo_instance":{
+      "type":"map",
+      "default":{
+        "ami":"coreos.1298.7.0",
+        "instance_type":"t2.medium",
+        "iam_instance_profile":"demo-server",
+        "role":"demo",
+        "ebs_optimized": false,
+        "root_volume_type":"gp2",
+        "root_volume_size":10,
+        "root_volume_encrypted":true,
+        "root_volume_delete_on_termination":true,
+        "var_volume_path":"/dev/xvdd",
+        "var_volume_type":"gp2",
+        "var_volume_size":10,
+        "var_volume_encrypted":false,
+        "var_volume_delete_on_termination":true,
+        "data_volume_path":"/dev/xvde",
+        "data_volume_type":"gp2",
+        "data_volume_size":10,
+        "data_volume_encrypted":false,
+        "data_volume_delete_on_termination":true,
+        "associate_public_ip":true
+      }
+    }
+  }
+}
