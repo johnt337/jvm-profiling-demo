@@ -34,7 +34,7 @@ resource "aws_key_pair" "authorized_key" {
 }
 
 module "s3" {
-  source    = "./modules/s3-bucket"
+  source    = "git::ssh://git@github.com/tf-modules/aws-s3-bucket.git?ref=0.0.1"
   site_name = "${format("%s-%s-%s-%s",var.deployment["customer"],var.deployment["site_name"],var.deployment["region"],var.deployment["aws_account_id"])}"
 }
 
