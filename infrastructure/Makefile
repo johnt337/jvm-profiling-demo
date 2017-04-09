@@ -55,11 +55,11 @@ render-ignition-fuze: infrastructure/templates/userdata/ignition.yaml build-tool
 	@cat $< | ct -pretty 2> /dev/null 1> infrastructure/templates/userdata/ignition.json
 	@echo "!!!!!!!!!!! RENDERED IGNITION FUZE !!!!!!!!!!!"
 
-get-modules: render-ignition-fuze infrastructure/templates/userdata/ignition.json
-	@cd infrastructure && terraform get 
+get-modules: 
+	@cd infrastructure && terraform get -update
 	@echo "!!!!!!!!!!! MODULES FETCHED !!!!!!!!!!!"
 
-plan-infra: infrastructure/deployment.tf get-modules
+plan-infra: infrastructure/deployment.tf get-modules render-ignition-fuze infrastructure/templates/userdata/ignition.json
 	@cd infrastructure && terraform plan -out infra.tfplan
 	@echo "!!!!!!!!!!! INFRASTRUCTURE PLANNED !!!!!!!!!!!"
 
