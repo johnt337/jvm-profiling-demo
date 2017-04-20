@@ -184,7 +184,7 @@ resource "null_resource" "sync_docker_files" {
 }
 
 module "demo" {
-  source                            = "./modules/demo"
+  source                            = "git::ssh://git@github.com/tf-modules/aws-coreos-instance.git?ref=0.0.1"
 
   # instance overrides
   ## base configs
